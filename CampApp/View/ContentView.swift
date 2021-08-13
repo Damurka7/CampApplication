@@ -1,13 +1,7 @@
-//
-//  ContentView.swift
-//  CampApp
-//
-//  Created by Damir Nurtdinov on 11.08.2021.
-//
-
+import SwiftUI
 import Firebase
 import FirebaseAuth
-import SwiftUI
+
 
 struct ContentView: View {
     
@@ -18,9 +12,11 @@ struct ContentView: View {
         VStack{
             
             if status{
-                BottomTabView()
+                
+                HomeView()
             }
             else{
+                
                 SignInView()
             }
             
@@ -36,6 +32,7 @@ struct ContentView: View {
         
     }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
