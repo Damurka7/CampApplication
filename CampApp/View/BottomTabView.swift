@@ -6,28 +6,35 @@
 //
 
 import SwiftUI
+import FirebaseAuth
+import Firebase
+import FirebaseDatabase
+
+var user = User(email: (Auth.auth().currentUser?.email)!, password: " ", name: "Name", surname: "Surname")
 
 struct BottomTabView: View {
     
     @State private var selectedView = 1
     
+    
     var body: some View {
         TabView(selection: $selectedView) {
             CampsView()
                 .tabItem {
-                    Image("iosFlagOutline")
+                    Image(systemName: "flag")
                     Text("Лагери")
                 }
                 .tag(0)
             HomeView()
                 .tabItem {
-                 //   Image(systemName: "2.square.fill")
+                    Image(systemName: "house")
                     Text("Главная")
                 }
                 .tag(1)
+                
             UserPersonalView()
                 .tabItem {
-                    //Image(systemName: "3.square.fill")
+                    Image(systemName: "person")
                     Text("Кабинет")
                 }
                 .tag(2)

@@ -9,11 +9,16 @@
 /*
  This file also contains a SignUpView structure
  */
-
+ 
 
 import SwiftUI
 import Firebase
 import FirebaseAuth
+import FirebaseDatabase
+import UIKit
+
+
+let db = Firestore.firestore()
 
 struct SignInView : View {
     
@@ -22,6 +27,10 @@ struct SignInView : View {
     @State var message = ""
     @State var alert = false
     @State var show = false
+    
+    //var ref: DatabaseReference!
+
+    var ref = Database.database().reference()
     
     var body : some View{
         VStack {
@@ -66,8 +75,10 @@ struct SignInView : View {
                         }
                         else{
                             
+                            
                             UserDefaults.standard.set(true, forKey: "status")
                             NotificationCenter.default.post(name: NSNotification.Name("statusChange"), object: nil)
+                            
                         }
                     }
                     
@@ -202,8 +213,6 @@ struct SignUpView : View {
 
 func signUpWithEmail(email: String,password : String,completion: @escaping (Bool,String)->Void){
     
-   
-    
     Auth.auth().createUser(withEmail: email, password: password) { (res, err) in
         
         if err != nil{
@@ -211,17 +220,21 @@ func signUpWithEmail(email: String,password : String,completion: @escaping (Bool
             completion(false,(err?.localizedDescription)!)
             return
         }
-        
-        let db = Firestore.firestore()
-        
+
+
         print(email)
         print(res!.user.uid)
+        
+        user.email = (res?.user.email)!
+        user.password = password
         
         db.collection("users").addDocument(data: ["email":email, "uid":res!.user.uid ]) { (error) in
             if error != nil {
                 print("Problems with database")
             }
         }
+        
+        
                 
         completion(true,(res?.user.email)!)
     }
@@ -237,8 +250,65 @@ func signInWithEmail(email: String,password : String,completion: @escaping (Bool
             return
         }
         
+        user.email = (res?.user.email)!
+        user.password = password
+        
+//        do{
+//            let decodedUser = try decoder.decode(User.self, from: temp)
+//        }catch{
+//            print("error in decoding")
+//        }
+
+        
+        let currUserUID = Auth.auth().currentUser!.uid
+        
+        let currUser = Auth.auth().currentUser
+        print(user.email)
+        let credential: AuthCredential = EmailAuthProvider.credential(withEmail: user.email, password: user.password)
+        print(credential)
+        currUser?.reauthenticate(with: credential) { args, error  in
+          if let error = error {
+            print(error)
+          } else {
+            print("reauthentificated")
+          }
+        }
+
+        db.collection("users").getDocuments()
+        {
+            (querySnapshot, err) in
+            
+            if let err = err
+            {
+                print("Error getting documents: \(err)");
+            }
+            else
+            {
+                var count = 0
+                for document in querySnapshot!.documents {
+                    count += 1
+                    print("\(document.documentID) => \(document.data())");
+                    if currUserUID == document.data()["uid"] as! String { //it tries to find current user in documents (not efficient) TODO: find more efecient way
+                        
+                        user.name = document.data()["name"] as! String
+                        user.surname = document.data()["surname"] as! String
+                        
+                        print(user.name)
+                        print(user.surname)
+                                                            
+                        print("name and surname are setted")
+                        break
+                    }
+                    
+                }
+                
+                print("Count = \(count)");
+            }
+        }
+        
         completion(true,(res?.user.email)!)
     }
+    
 }
 
 struct SignInView_Previews: PreviewProvider {

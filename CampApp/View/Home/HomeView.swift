@@ -11,21 +11,17 @@ import Firebase
 import FirebaseAuth
 
 struct HomeView : View {
-    
     var body : some View{
         
         VStack{
+            PhotosView()
+                .frame(width: .infinity, height: 320)
+            InfoListParentFalse()
+            Spacer()
             
-            Text("Home")
-            Button(action: {
-                UserDefaults.standard.set(false, forKey: "status")
-                NotificationCenter.default.post(name: NSNotification.Name("statusChange"), object: nil)
-                
-            }) {
-                
-                Text("Logout")
-            }
         }
+        .ignoresSafeArea() //available only from iOS 14
+
     }
 }
 
