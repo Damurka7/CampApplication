@@ -18,11 +18,7 @@ struct UserPersonalView: View{
     let db = Firestore.firestore()
     @State var editMode = false
     
-    
-   // let currUserUID = "XHBaC8MpNgONmHU4WOMayqEc7U12"
     let currUserUID = Auth.auth().currentUser?.uid
-   // user = User(email: (Auth.auth().currentUser?.email)!, password: " ", name: "Name", surname: "Surname")
-
     
     var body: some View {
         VStack {
@@ -109,13 +105,13 @@ struct UserPersonalView: View{
                         .foregroundColor(.gray)
                 } else {
                     
-                    Text(name)
+                    Text(user.name)
                         .font(.system(size: 20))
                         .foregroundColor(.gray)
-                    Text(surname)
+                    Text(user.surname)
                         .font(.system(size: 20))
                         .foregroundColor(.gray)
-                    Text(email)
+                    Text(user.email)
                         .font(.system(size: 20))
                         .foregroundColor(.gray)
                 }

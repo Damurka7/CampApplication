@@ -10,7 +10,7 @@ import FirebaseAuth
 import Firebase
 import FirebaseDatabase
 
-var user = User(email: (Auth.auth().currentUser?.email)!, password: " ", name: "Name", surname: "Surname")
+var user = User(email: (Auth.auth().currentUser?.email)!)
 
 struct BottomTabView: View {
     
