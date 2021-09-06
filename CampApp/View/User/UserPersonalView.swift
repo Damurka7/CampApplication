@@ -36,9 +36,7 @@ struct UserPersonalView: View{
                         }
                         else
                         {
-                            var count = 0
                             for document in querySnapshot!.documents {
-                                count += 1
                                 print("\(document.documentID) => \(document.data())");
                                 if currUserUID == document.data()["uid"] as! String { //it tries to find current user in documents (not efficient) TODO: find more efecient way
                                     db.collection("users").document(document.documentID).setData(["email" : email], merge: true)
@@ -47,39 +45,28 @@ struct UserPersonalView: View{
                                     var credential: AuthCredential = EmailAuthProvider.credential(withEmail: user.email, password: user.password)
                                     print(credential)
                                     currUser?.reauthenticate(with: credential) { args, error  in
-                                      if let error = error {
-                                        print(error)
-                                      } else {
-                                        print("reauthentificated")
-                                      }
+                                        if let error = error {
+                                            print(error)
+                                        } else {
+                                            print("reauthentificated")
+                                        }
                                     }
                                     user.email = email
                                     currUser!.updateEmail(to: email) { error in
-                                           if let error = error {
-                                               print(error)
-                                           } else {
-                                               print("email has CHANGED")
-                                           }
-                                       }
+                                        if let error = error {
+                                            print(error)
+                                        } else {
+                                            print("email has CHANGED")
+                                        }
+                                    }
                                     db.collection("users").document(document.documentID).setData(["name" : name], merge: true)
                                     user.name = name
-                                    print(user.name)
                                     db.collection("users").document(document.documentID).setData(["surname" : surname], merge: true)
                                     user.surname = surname
-                                                
-//                                    do {
-//                                        let savedUser = try encoder.encode(user)
-//                                        tempUser = savedUser
-//                                        print(savedUser)
-//                                    }catch{
-//                                        print("Error in encoder")
-//                                    }
                                     break
                                 }
                                 
                             }
-                            
-                            print("Count = \(count)");
                         }
                     }
                 }else{
